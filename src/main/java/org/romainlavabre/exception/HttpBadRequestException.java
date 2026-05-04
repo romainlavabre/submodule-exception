@@ -7,8 +7,14 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * @author Romain Lavabre <romainlavabre98@gmail.com>
  */
 @ResponseStatus( code = HttpStatus.BAD_REQUEST )
-public class HttpBadRequestException extends RuntimeException {
+public class HttpBadRequestException extends CustomException {
     public HttpBadRequestException( String message ) {
         super( message );
+    }
+
+
+    @Override
+    public HttpStatus getStatusCode() {
+        return HttpStatus.BAD_REQUEST;
     }
 }

@@ -7,8 +7,14 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * @author Romain Lavabre <romainlavabre98@gmail.com>
  */
 @ResponseStatus( code = HttpStatus.CONFLICT )
-public class HttpConflictException extends RuntimeException {
+public class HttpConflictException extends CustomException {
     public HttpConflictException( String message ) {
         super( message );
+    }
+
+
+    @Override
+    public HttpStatus getStatusCode() {
+        return HttpStatus.CONFLICT;
     }
 }

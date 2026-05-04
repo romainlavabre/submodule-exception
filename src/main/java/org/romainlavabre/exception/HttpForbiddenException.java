@@ -7,9 +7,15 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * @author Romain Lavabre <romainlavabre98@gmail.com>
  */
 @ResponseStatus( code = HttpStatus.FORBIDDEN )
-public class HttpForbiddenException extends RuntimeException {
+public class HttpForbiddenException extends CustomException {
 
     public HttpForbiddenException( String message ) {
         super( message );
+    }
+
+
+    @Override
+    public HttpStatus getStatusCode() {
+        return HttpStatus.FORBIDDEN;
     }
 }
