@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -23,6 +24,18 @@ public class ControllerAdvice {
                 "status", customException.getStatusCode().value(),
                 "error", customException.getStatusCode().getReasonPhrase(),
                 "message", customException.getMessage(),
+                "path", request.getRequestURI()
+        ) );
+    }
+
+
+    @ExceptionHandler( NoResourceFoundException.class )
+    public ResponseEntity< Map< String, Object > > handleResourceNotFound( NoResourceFoundException exception, HttpServletRequest request ) {
+        return ResponseEntity.internalServerError().body( Map.of(
+                "timestamp", ZonedDateTime.now( ZoneOffset.UTC ).toString(),
+                "status", 404,
+                "error", HttpStatus.NOT_FOUND.getReasonPhrase(),
+                "message", "RESOURCE_NOT_FOUND",
                 "path", request.getRequestURI()
         ) );
     }
