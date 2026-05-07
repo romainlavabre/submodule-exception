@@ -1,3 +1,4 @@
+2.0.2: Add Debug
 2.0.1: FIX route not found converted as 500 error
 2.0.0: Add exception handler
 1.2.0: ADD Resource locked & Unauthorized exception

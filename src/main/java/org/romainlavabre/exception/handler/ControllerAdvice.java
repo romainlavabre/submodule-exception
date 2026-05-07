@@ -2,6 +2,8 @@ package org.romainlavabre.exception.handler;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.romainlavabre.exception.CustomException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,6 +19,9 @@ import java.util.Map;
  */
 @RestControllerAdvice
 public class ControllerAdvice {
+    private static final Logger logger = LoggerFactory.getLogger( "ControllerAdvice" );
+
+
     @ExceptionHandler( CustomException.class )
     public ResponseEntity< Map< String, Object > > handleBusiness( CustomException customException, HttpServletRequest request ) {
         return ResponseEntity.status( customException.getStatusCode() ).body( Map.of(
@@ -43,6 +48,8 @@ public class ControllerAdvice {
 
     @ExceptionHandler( Exception.class )
     public ResponseEntity< Map< String, Object > > handleGeneric( Exception exception, HttpServletRequest request ) {
+        logger.info( "An unexpected error occurred ({}): {}", exception.getClass().getName(), exception.getMessage() );
+
         return ResponseEntity.internalServerError().body( Map.of(
                 "timestamp", ZonedDateTime.now( ZoneOffset.UTC ).toString(),
                 "status", 500,
