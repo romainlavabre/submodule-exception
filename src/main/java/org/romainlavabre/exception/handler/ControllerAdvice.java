@@ -48,7 +48,7 @@ public class ControllerAdvice {
 
     @ExceptionHandler( Exception.class )
     public ResponseEntity< Map< String, Object > > handleGeneric( Exception exception, HttpServletRequest request ) {
-        logger.info( "An unexpected error occurred ({}): {}", exception.getClass().getName(), exception.getMessage() );
+        exception.printStackTrace();
 
         return ResponseEntity.internalServerError().body( Map.of(
                 "timestamp", ZonedDateTime.now( ZoneOffset.UTC ).toString(),
