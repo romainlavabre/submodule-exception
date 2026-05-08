@@ -54,6 +54,16 @@ public class ControllerAdvice {
 
         SentryId sentryId = Sentry.captureException( exception );
 
+        if ( sentryId.toString().matches( "^0+$" ) ) {
+            return ResponseEntity.internalServerError().body( Map.of(
+                    "timestamp", ZonedDateTime.now( ZoneOffset.UTC ).toString(),
+                    "status", 500,
+                    "error", HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
+                    "message", "INTERNAL_SERVER_ERROR",
+                    "path", request.getRequestURI()
+            ) );
+        }
+
         return ResponseEntity.internalServerError().body( Map.of(
                 "timestamp", ZonedDateTime.now( ZoneOffset.UTC ).toString(),
                 "status", 500,
