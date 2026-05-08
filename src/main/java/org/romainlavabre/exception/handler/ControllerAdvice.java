@@ -1,6 +1,7 @@
 package org.romainlavabre.exception.handler;
 
 import io.sentry.Sentry;
+import io.sentry.protocol.SentryId;
 import jakarta.servlet.http.HttpServletRequest;
 import org.romainlavabre.exception.CustomException;
 import org.slf4j.Logger;
@@ -51,14 +52,15 @@ public class ControllerAdvice {
     public ResponseEntity< Map< String, Object > > handleGeneric( Exception exception, HttpServletRequest request ) {
         logger.error( "Unhandled exception", exception );
 
-        Sentry.captureException( exception );
+        SentryId sentryId = Sentry.captureException( exception );
 
         return ResponseEntity.internalServerError().body( Map.of(
                 "timestamp", ZonedDateTime.now( ZoneOffset.UTC ).toString(),
                 "status", 500,
                 "error", HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
                 "message", "INTERNAL_SERVER_ERROR",
-                "path", request.getRequestURI()
+                "path", request.getRequestURI(),
+                "error_id", sentryId.toString()
         ) );
     }
 }

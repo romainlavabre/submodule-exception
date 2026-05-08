@@ -1,3 +1,4 @@
+2.1.0: ADD error code in 500 error response
 2.0.4: FIX Sentry integration
 2.0.3: FIX Sentry integration
 2.0.2: Add Debug
