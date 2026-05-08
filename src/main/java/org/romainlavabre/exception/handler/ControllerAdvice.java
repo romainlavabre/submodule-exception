@@ -19,7 +19,7 @@ import java.util.Map;
  */
 @RestControllerAdvice
 public class ControllerAdvice {
-    private static final Logger logger = LoggerFactory.getLogger( "ControllerAdvice" );
+    private static final Logger logger = LoggerFactory.getLogger( "ErrorHandler" );
 
 
     @ExceptionHandler( CustomException.class )
@@ -36,7 +36,7 @@ public class ControllerAdvice {
 
     @ExceptionHandler( NoResourceFoundException.class )
     public ResponseEntity< Map< String, Object > > handleResourceNotFound( NoResourceFoundException exception, HttpServletRequest request ) {
-        return ResponseEntity.internalServerError().body( Map.of(
+        return ResponseEntity.status( HttpStatus.NOT_FOUND ).body( Map.of(
                 "timestamp", ZonedDateTime.now( ZoneOffset.UTC ).toString(),
                 "status", 404,
                 "error", HttpStatus.NOT_FOUND.getReasonPhrase(),
@@ -48,7 +48,8 @@ public class ControllerAdvice {
 
     @ExceptionHandler( Exception.class )
     public ResponseEntity< Map< String, Object > > handleGeneric( Exception exception, HttpServletRequest request ) {
-        exception.printStackTrace();
+        logger.error( "Unhandled exception", exception );
+
 
         return ResponseEntity.internalServerError().body( Map.of(
                 "timestamp", ZonedDateTime.now( ZoneOffset.UTC ).toString(),
