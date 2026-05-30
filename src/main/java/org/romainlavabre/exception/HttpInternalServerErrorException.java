@@ -9,8 +9,19 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus( code = HttpStatus.INTERNAL_SERVER_ERROR )
 public class HttpInternalServerErrorException extends CustomException {
 
+    protected final boolean retryable;
+
+
     public HttpInternalServerErrorException( String message ) {
         super( message );
+        this.retryable = true;
+        printStackTrace();
+    }
+
+
+    public HttpInternalServerErrorException( String message, boolean retryable ) {
+        super( message );
+        this.retryable = retryable;
         printStackTrace();
     }
 
@@ -18,5 +29,11 @@ public class HttpInternalServerErrorException extends CustomException {
     @Override
     public HttpStatus getStatusCode() {
         return HttpStatus.INTERNAL_SERVER_ERROR;
+    }
+
+
+    @Override
+    public boolean retryable() {
+        return retryable;
     }
 }

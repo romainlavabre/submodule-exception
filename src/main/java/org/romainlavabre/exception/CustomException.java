@@ -12,4 +12,7 @@ public abstract class CustomException extends RuntimeException {
 
 
     abstract public HttpStatus getStatusCode();
+
+
+    abstract public boolean retryable();
 }

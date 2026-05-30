@@ -4,6 +4,7 @@ import io.sentry.Sentry;
 import io.sentry.protocol.SentryId;
 import jakarta.servlet.http.HttpServletRequest;
 import org.romainlavabre.exception.CustomException;
+import org.romainlavabre.exception.config.ErrorDetail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,7 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author Romain Lavabre <romain.lavabre@proton.me>
@@ -23,15 +25,34 @@ import java.util.Map;
 public class ControllerAdvice {
     private static final Logger logger = LoggerFactory.getLogger( "ErrorHandler" );
 
+    protected final Optional< ErrorDetail > errorDetail;
+
+
+    public ControllerAdvice( Optional< ErrorDetail > errorDetail ) {
+        this.errorDetail = errorDetail;
+    }
+
 
     @ExceptionHandler( CustomException.class )
     public ResponseEntity< Map< String, Object > > handleBusiness( CustomException customException, HttpServletRequest request ) {
+        String detail = "No detail";
+
+        if ( errorDetail.isPresent() ) {
+            String result = errorDetail.get().getDetail( customException.getMessage() );
+
+            if ( result != null ) {
+                detail = result;
+            }
+        }
+
         return ResponseEntity.status( customException.getStatusCode() ).body( Map.of(
                 "timestamp", ZonedDateTime.now( ZoneOffset.UTC ).toString(),
                 "status", customException.getStatusCode().value(),
                 "error", customException.getStatusCode().getReasonPhrase(),
+                "detail", detail,
                 "message", customException.getMessage(),
-                "path", request.getRequestURI()
+                "path", request.getRequestURI(),
+                "retryable", customException.retryable()
         ) );
     }
 
@@ -43,7 +64,8 @@ public class ControllerAdvice {
                 "status", 404,
                 "error", HttpStatus.NOT_FOUND.getReasonPhrase(),
                 "message", "RESOURCE_NOT_FOUND",
-                "path", request.getRequestURI()
+                "path", request.getRequestURI(),
+                "retryable", false
         ) );
     }
 
@@ -60,7 +82,8 @@ public class ControllerAdvice {
                     "status", 500,
                     "error", HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
                     "message", "INTERNAL_SERVER_ERROR",
-                    "path", request.getRequestURI()
+                    "path", request.getRequestURI(),
+                    "retryable", true
             ) );
         }
 
@@ -70,7 +93,8 @@ public class ControllerAdvice {
                 "error", HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
                 "message", "INTERNAL_SERVER_ERROR",
                 "path", request.getRequestURI(),
-                "error_id", sentryId.toString()
+                "error_id", sentryId.toString(),
+                "retryable", true
         ) );
     }
 }

@@ -8,13 +8,29 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  */
 @ResponseStatus( code = HttpStatus.CONFLICT )
 public class HttpConflictException extends CustomException {
+    protected final boolean retryable;
+
+
     public HttpConflictException( String message ) {
         super( message );
+        this.retryable = true;
+    }
+
+
+    public HttpConflictException( String message, boolean retryable ) {
+        super( message );
+        this.retryable = retryable;
     }
 
 
     @Override
     public HttpStatus getStatusCode() {
         return HttpStatus.CONFLICT;
+    }
+
+
+    @Override
+    public boolean retryable() {
+        return retryable;
     }
 }
