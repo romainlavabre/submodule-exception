@@ -1,3 +1,4 @@
+2.4.0: ADD 409 retryable handler for concurrency failures (fairfair-cloud/support#775)
 2.3.0: ADD every missing 4xx exception (402, 405 to 408, 410 to 417, 421, 424, 426, 428, 429, 431, 451)
 2.2.0: Add Retryable & error detail
 2.1.1: Discard errorId if sentry is not enabled
